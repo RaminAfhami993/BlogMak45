@@ -55,6 +55,14 @@ const UserSchema = new Schema({
     }
 });
 
+UserSchema.methods.toJSON = function() {
+    let user = this;
+    user = user.toObject();
+    delete user.password;
+    delete user.__v;
+    return user;
+};
+
 UserSchema.pre('save', function(next) {
     const user = this;
     if (this.isNew || this.isModified('password')) {
@@ -70,5 +78,7 @@ UserSchema.pre('save', function(next) {
         return next();
     };
 });
+
+
 
 module.exports = mongoose.model('User', UserSchema);
