@@ -1,6 +1,10 @@
 const express = require('express');
 const multer = require('multer');
+const fs = require('fs');
+const path = require('path');
 const generalTools = require('../tools/general-tools');
+const User = require('../models/user');
+
 
 
 const router = express.Router();
@@ -15,12 +19,32 @@ router.post('/avatar', (req, res) => {
 
     upload(req, res, function(err) {
         if (err instanceof multer.MulterError) {
-            res.status(404).send('Server Error!')   
+            res.status(500).send('Server Error!')   
         } else if (err) {
-            res.status(406).send(err.message)   
+            res.status(404).send(err.message)   
         } else {
-            let a = req.file
-            res.json(true)
+            User.findByIdAndUpdate(req.session.user._id, {avatar: req.file.filename}, {new: true}, (err, user) => {
+                if (err) {
+                    res.status(500).json({msg: 'Server Error!'})   
+                } else {
+                    if (req.session.user.avatar) {
+                        fs.unlink(path.join(__dirname, '../public/images/avatars', req.session.user.avatar), err => {
+                            if (err) {
+                                res.status(500).json({msg: 'Server Error!'})
+                            } else {
+                                req.session.user = user;
+
+                                res.redirect('/user/dashboard');
+                            }
+                        })
+
+                    } else {
+                        req.session.user = user;
+
+                        res.redirect('/user/dashboard');
+                    }
+                }
+            });    
         }
     })
 })
