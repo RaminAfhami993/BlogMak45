@@ -69,7 +69,7 @@ router.get('/loginPage', generalTools.sessionChecker, (req, res) => {
 router.post('/login', (req, res) => {
     if (!req.body.username || !req.body.password) {
         return res.redirect(url.format({
-            pathname:"/api/auth/loginPage",
+            pathname:"/auth/loginPage",
             query: {
                "msg": 'Empty Field :('
              }
@@ -79,7 +79,7 @@ router.post('/login', (req, res) => {
     User.findOne({username: req.body.username}, (err, user) => {
         if (err) {
             return res.redirect(url.format({
-                pathname:"/api/auth/loginPage",
+                pathname:"/auth/loginPage",
                 query: {
                    "msg": 'Server Error :('
                  }
@@ -88,7 +88,7 @@ router.post('/login', (req, res) => {
 
         if (!user) {
             return res.redirect(url.format({
-                pathname:"/api/auth/loginPage",
+                pathname:"/auth/loginPage",
                 query: {
                    "msg": 'User Not Found :('
                  }
@@ -98,7 +98,7 @@ router.post('/login', (req, res) => {
         bcrypt.compare(req.body.password, user.password, function(err, isMatch) {
             if (err) {
                 return res.redirect(url.format({
-                    pathname:"/api/auth/loginPage",
+                    pathname:"/auth/loginPage",
                     query: {
                        "msg": 'Server Error :('
                      }
@@ -106,7 +106,7 @@ router.post('/login', (req, res) => {
             };
 
             if (!isMatch) return res.redirect(url.format({
-                pathname:"/api/auth/loginPage",
+                pathname:"/auth/loginPage",
                 query: {
                    "msg": 'User Not Found :('
                  }
@@ -114,7 +114,7 @@ router.post('/login', (req, res) => {
 
             req.session.user = user;
 
-            res.redirect('/api/user/dashboard');
+            res.redirect('/user/dashboard');
         });
     });
 });
