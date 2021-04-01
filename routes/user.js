@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const generalTools = require('../tools/general-tools');
 const User = require('../models/user');
-
+const acc = require('../tools/acc')
 
 
 const router = express.Router();
@@ -41,13 +41,49 @@ router.post('/avatar', (req, res) => {
                     } else {
                         req.session.user = user;
 
+
                         res.redirect('/user/dashboard');
                     }
                 }
             });    
         }
     })
+});
+
+
+// n = 13
+// i = 5
+
+// 0 -> 0i - i - 1
+// 1 -> i  - 2i -1
+// 2 -> 2i  - 3i -1
+// 3 -> 3i  - 4i -1
+
+
+
+router.get('/allUsers/:page/:num', acc.userManagement, (req, res) => {
+
+    User.countDocuments({role: {$ne: 'admin'}}, (err, count) => {
+        if (err) return res.json({err, msg: "Something went wrong"});
+
+        User.find({role: {$ne: 'admin'}}).sort({createdAt: -1}).skip(Number(req.params.page) * Number(req.params.num)).limit(Number(req.params.num)).exec((err, users) => {
+            if (err) return res.json({err, msg: "Something went wrong"});
+            res.json({users, count});
+        })
+    })
+
 })
+
+
+router.post('/editUser', acc.editUser, (req, res) => {
+
+    res.json(true)
+  
+})
+
+
+
+
 
 
 module.exports = router;

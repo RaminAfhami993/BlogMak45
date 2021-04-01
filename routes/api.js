@@ -3,7 +3,7 @@ const router = express.Router();
 const auth = require('./auth');
 const user = require('./user');
 // const comment = require('./comment');
-// const article = require('./article');
+const article = require('./article');
 const User = require('../models/user')
 
 
@@ -11,7 +11,7 @@ const User = require('../models/user')
 router.use('/auth', auth);
 router.use('/user', user);
 // router.use('/comment', comment);
-// router.use('/article', article);
+router.use('/article', article);
 
 
 // router.post('/createAdmin', (req, res) => {
